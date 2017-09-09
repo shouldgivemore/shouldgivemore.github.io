@@ -17,7 +17,7 @@
 <!--<![endif]-->
 
 <head>
-  <title>Archives: 2017 | Giv3more</title>
+  <title>Drozer | Giv3more</title>
   <!-- Meta data -->
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -59,7 +59,7 @@
 </head>
 
 <!--
-<body class="home-template">
+<body class="post-template">
 -->
 <body id="index" class="lightnav animsition">
 
@@ -166,87 +166,65 @@
         <!-- ============================ Header & Logo bar =========================== -->
 
 
-      <!-- ============================ Hero Image =========================== -->
-
-<section id="hero" class="scrollme">
-    <div class="container-fluid element-img" style="background: url(/img/2.jpg) no-repeat center center fixed;background-size: cover">
-        <div class="row">
-            <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-8 col-md-offset-2 vertical-align cover boost text-center">
-                <div class="center-me animateme" data-when="exit" data-from="0" data-to="0.6" data-opacity="0" data-translatey="100">
-                    <div>
-                        
-                        <h2>Live up to your youth.</h2>
-                        <p></p>
-                        
-                        <h2></h2>
-                        <p>不要辜负你的青春。</p>
-                        
-
-                    </div>
-                </div>
-            </div>
-            <!-- // .col-md-12 -->
-        </div>
-        <div class="herofade beige-dk"></div>
-    </div>
-</section>
-
-<!-- Height spacing helper -->
-<div class="heightblock"></div>
-<!-- // End height spacing helper -->
-
-<!-- ============================ END Hero Image =========================== -->
-
-
-
-
-<section id="services">
+      
+<section id="intro">
     <div class="container">
-        <div class="row">
-            <div class="col-md-10 col-md-offset-1">
-                <div class="row boxes">
-                    
-                    
-                        
-                        
-                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 wow fadeInUp" data-wow-delay="0.3s">
-                            
-                              <h4 class="title"><a href="/2017/09/09/drozer/">Drozer</a></h4>
-                            
-                            <p><time datetime="2017-09-09T08:17:24.707Z"><a href="/2017/09/09/drozer/">2017-09-09</a></time></p>
-                        </div>
-                    
-                        
-                        
-                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 wow fadeInUp" data-wow-delay="0.3s">
-                            
-                              <h4 class="title"><a href="/2017/09/09/android-native-so/">Android--native层so文件调试</a></h4>
-                            
-                            <p><time datetime="2017-09-09T06:12:37.336Z"><a href="/2017/09/09/android-native-so/">2017-09-09</a></time></p>
-                        </div>
-                    
-                        
-                        
-                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 wow fadeInUp" data-wow-delay="0.3s">
-                            
-                              <h4 class="title"><a href="/2017/09/09/hello-world/">hello wolrd</a></h4>
-                            
-                            <p><time datetime="2017-09-09T05:57:14.523Z"><a href="/2017/09/09/hello-world/">2017-09-09</a></time></p>
-                        </div>
-                    
-                </div>
-            </div>    
+        <div class="row col-md-offset-2">
+            <div class="col-md-8">
+    			<span class="post-meta">
+      <time datetime="2017-09-09T08:17:24.707Z" itemprop="datePublished">
+          2017-09-09
+      </time>
+    
+</span>
+                <h1>Drozer</h1>
+            </div>
         </div>
-    </div>
-</section> 
+        <div class="col-md-8 col-md-offset-2">
+      		<p>利用Drozer对app进行评估<br><a id="more"></a></p>
+<h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00:前言"></a><strong>0x00</strong>:前言</h2><p>Android中的app其实存在着很多应用缺陷，很多时候都需要对其进行安全评估，<strong>drozer</strong>就是其中一个很好的工具。这里用到一个app是<strong>sieve</strong>(一个密码管理器)，它本身存在的缺陷就可以作为测试的样本。<br></p>
+<h2 id="0x01"><a href="#0x01" class="headerlink" title="0x01:"></a><strong>0x01</strong>:</h2><p>安装sieve后进去配置好密码，PIN码后，随便添加一个需要管理密码的信息<br><br><img src="/img/drozer/1.jpg" alt=""><br></p>
+<h2 id="0x02-安装drozer"><a href="#0x02-安装drozer" class="headerlink" title="0x02:安装drozer"></a><strong>0x02</strong>:安装drozer</h2><p><strong>tips</strong>:我的平台是windows，安装时有几个坑<br><br>下载了drozer后安装，跟进到drozer目录下运行<strong>drozer.bat</strong>，显示如下即是安装成功<br><br><img src="/img/drozer/2.png" alt=""><br><br>接着在下载的drozer文件夹里面有个<strong>agent.apk</strong>文件，将其安装到手机上并运行如下<br><br><img src="/img/drozer/3.jpg" alt=""><br><br>然后<strong>adb forward tcp:31415 tcp:31415</strong>转发一下<br><br><img src="/img/drozer/4.png" alt=""><br><br>接着运行<strong>drozer console connect</strong>的时候会显示如下<br><br><img src="/img/drozer/5.png" alt=""><br><br>解决方案:</p>
+<p>　　　  在drozer目录下创建一个<strong>.drozer_config</strong>文件(windows下无法直接创建.开头的文件，方法为先创建一个1.drozer_config文件,再用rename命令修改)</p>
+<p>　　　　其中添加以下几行(其中为java和javac的路径)</p>
+<p>　　　　<strong>[executables]<br>　　　　java=F:\Java\jdk1.8.0_66\bin\java.exe<br>　　　　javac=F:\Java\jdk1.8.0_66\bin\javac.exe</strong></p>
+<p>　　　　创建后再运行，显示如下即运行成功</p>
+<p>　　　　(如果出现Erron 10061或者Erron 10054，解决方法请见:<a href="http://blog.csdn.net/ksr12333/article/details/39181057" target="_blank" rel="external"><font color="#6495ED">http://blog.csdn.net/ksr12333/article/details/39181057</font></a>)<br><br><img src="/img/drozer/6.png" alt=""><br></p>
+<h2 id="0x03：演示drozer如何评估app"><a href="#0x03：演示drozer如何评估app" class="headerlink" title="0x03：演示drozer如何评估app"></a><strong>0x03</strong>：演示drozer如何评估app</h2><p><strong>(1)</strong>首先可以列出所有包名<strong>run app.package.list -f sieve</strong>  这里就不全部列出了，用-f关键字可以筛选你想测试的app<br><br><img src="/img/drozer/7.png" alt=""><br><br>获取基本信息(例如:sieve版本，权限信息，用户ID，组ID，数据目录等)</p>
+<p><strong>run app.package.info -a com.mwr.example.sieve</strong><br><br><img src="/img/drozer/8.png" alt=""><br><br><strong>(2)Itentify the Attack Surface</strong>(确认攻击面) <strong>run app.package.attacksurface com.mwr.example.sieve</strong><br><br><img src="/img/drozer/9.png" alt=""><br><br>debuggable就可以让我们用adb绑定来监测该app</p>
+<p>　　接着获取该<strong>Attack Surface</strong>的信息  <strong>run app.activity.info -a com.mwr.example.sieve</strong><br><br><img src="/img/drozer/10.png" alt=""><br><br>启动<strong>Activity run app.activity.start –-component com.mwr.example.sieve com.mwr.example.sieve.PWList</strong>(PWList一看就是password列表一类的包，所以运行它)<br><br><img src="/img/drozer/11.jpg" alt=""><br><br><strong>(3)</strong>进行SQL注入</p>
+<p>　　用<strong>projection</strong>和<strong>selection</strong>参数可以将SQL语句注入到Content Provider中</p>
+<p>　　<strong>run app.provider.query content://com.mwr.example.sieve.DBContentProvider/Passwords/ –projection “”</strong><br><br><img src="/img/drozer/12.png" alt=""><br><br>这里报错就表示可以注入。继续<strong>run app.provider.query content://com.mwr.example.sieve.DBContentProvider/Passwords/ –selection “”</strong><br><br><img src="/img/drozer/13.png" alt=""><br><br>用<strong>run app.provider.query content://com.mwr.example.sieve.DBContentProvider/Passwords/ –projection “* FROM Key;-“</strong>命令可以选择具体需要列出的表。</p>
+<p>　　这是基于Android操作系统建议使用SQLite数据库存储用户数据。SQLite数据库使用SQL语句，所以可以进行SQL注入。</p>
+<p>　<strong>(4)</strong>从Content Provider中获取信息</p>
+<p>　　<strong>run app.provider.info -a com.mwr.example.sieve</strong><br><br><img src="/img/drozer/14.png" alt=""><br><br>可以看到Content Provider的具体信息，权限等等</p>
+<p>　　查看Content Provider的<strong>URI</strong>(数据泄露)</p>
+<p>　　<strong>run scanner.provider.finduris -a com.mwr.example.sieve</strong><br><br><img src="/img/drozer/15.png" alt=""><br><br>我们尝试查看具体信息 <strong>run app.provider.query content://com.mwr.example.sieve.DBContentProvider/Passwords/ –-vertical</strong><br><br><img src="/img/drozer/16.png" alt=""><br><br>可以看到加密的密码以及设置的信息</p>
+<p>　<strong>(5)</strong>检测是否存在遍历文件漏洞</p>
+<p>　　<strong>run scanner.provider.traversal -a com.mwr.example.sieve</strong><br><br><img src="/img/drozer/17.png" alt=""><br><br>上面的部分比较简单的演示了drozer的基本用法，更加详细的请见官方文档:<br>　　<a href="https://labs.mwrinfosecurity.com/assets/BlogFiles/mwri-drozer-user-guide-2015-03-23.pdf" target="_blank" rel="external"><font color="#6495ED">https://labs.mwrinfosecurity.com/assets/BlogFiles/mwri-drozer-user-guide-2015-03-23.pdf</font></a><br></p>
+<h2 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04:总结"></a><strong>0x04</strong>:总结</h2><p>drozer强大的评估功能(SQL注入检测、Content Provider检测、遍历文件漏洞、以及根据漏洞捕获敏感信息)为我们在处理一个app时提供了很大的帮助，也希望借此分享给所有热爱Android安全的朋友。如果有什么地方没写对，望不吝指正。</p>
+<h2 id="0x05-参考"><a href="#0x05-参考" class="headerlink" title="0x05:参考"></a><strong>0x05</strong>:参考</h2><p><a href="http://www.droidsec.cn/%E4%BD%BF%E7%94%A8drozer%E5%AF%B9android%E5%BA%94%E7%94%A8%E8%BF%9B%E8%A1%8C%E5%AE%89%E5%85%A8%E8%AF%84%E4%BC%B0/" target="_blank" rel="external"><font color="#6495ED">drozer对android应用进行安全评估</font></a></p>
 
-<section id="statement">
-    <div class="container text-center wow fadeInUp" data-wow-delay="0.5s">
-        <div class="row">
-            <p>做点什么总比什么都不做要好得多。</p>
+            <div class="clearfix"></div>
+            <hr class="nogutter">
         </div>
+        <nav class="pagination" role="pagination">
+    
+    
+    <a class="pull-right" href="/2017/09/09/android-native-so/">
+        Android--native层so文件调试 →
+    </a>
+    
+</nav>
+
+        <div class="duoshuo">
+
+
+</div>
     </div>
 </section>
+
+
       
 <!-- ============================ Footer =========================== -->
 

@@ -17,20 +17,20 @@
 <!--<![endif]-->
 
 <head>
-  <title>Android--native层so文件调试 | Hexo</title>
+  <title>Android--native层so文件调试 | Giv3more</title>
   <!-- Meta data -->
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="generator" content="Hexo">
-    <meta name="author" content="John Doe">
-    <meta name="description" content="" />
+    <meta name="generator" content="Giv3more">
+    <meta name="author" content="Giv3more">
+    <meta name="description" content="Giv3more's blog" />
     <meta name="keywords" content="" />
 
     <!-- Favicon, (keep icon in root folder) -->
     <link rel="Shortcut Icon" href="/img/favicon.ico" type="image/ico">
 
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="Giv3more" type="application/atom+xml">
     <link rel="stylesheet" href="/css/all.css" media="screen" type="text/css">
     
     <link rel="stylesheet" href="/highlightjs/vs.css" type="text/css">
@@ -129,7 +129,7 @@
                     <!-- Info-bar -->
                     <nav>
                         <ul class="nav">
-                            <li><a href="/" class="animsition-link">Hexo</a></li>
+                            <li><a href="/" class="animsition-link">Giv3more</a></li>
                             <li class="nolink"><span>Always </span>Creative.</li>
                             
                             <li><a href="https://github.com/" title="Github" target="_blank"><i class="icon-github"></i></a></li>
@@ -181,25 +181,28 @@
             </div>
         </div>
         <div class="col-md-8 col-md-offset-2">
-      		<p>对于Android架构层中的native层进行调试分析学习一波知识~</p>
-<h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00:前言"></a>0x00:前言</h2><p>在做这道题之前发现有学长之前做过，所以理了下思路准备写写过程。毕竟我是新手，所以写得很啰嗦，其中遇到的很多细节问题困扰了我很久，也是希望通过这些让想入Android的朋友少跳点坑，还望不吝指正。<br><br>这道题是在阿里挑战赛上扒下来的，调试过程中遇到了不少的坑(毕竟第一次调)。本来打算用真机调试，但是后面的步骤中有因为手机ROM的问题必须得刷机，所以还是用的模拟器来调。</p>
-<h2 id="0x01"><a href="#0x01" class="headerlink" title="0x01:"></a>0x01:</h2><p>这个CM主要是调试native层和patch so的使用。<br><br>安装apk进去是这样的:<br><br><img src="/img/android-native-so/1.png" alt=""><br><br>目标就是破解密码。<br><br>一般思路是先看看java层，然而反编译一看:<br><img src="/img/android-native-so/2.png" alt=""><br><br>丝毫没有破解的地方，所以只好考虑native层，调试so文件。<br><br>将反编译后的libcrackme.so丢进IDA里可以看到验证函数:<br><img src="/img/android-native-so/3.png" alt=""><br><br>接着尝试IDA attach这个so文件，但是attach上程序就退出了，所以就对下面的JNI_Onload()这个加载数据函数进行分析。</p>
-<h2 id="0x02"><a href="#0x02" class="headerlink" title="0x02:"></a>0x02:</h2><p>首先打开ddms，不打开的话调试端口是关闭的，后面没法使用jdb。<br><br>!注意，这里有个坑是:最好先cmd 然后netstat –ano | find “8700”是否被占用，否则后续的调试时无法进行的。<br><br>只有占用端口8700的程序为javaw时候才正常。<br><br>小tips:IDA中android_server一般有两个，一种是支持Android5.0以上的(字符短些)，还有一种是Android5.0以下的(字符长一点)。<br><br><img src="/img/android-native-so/4.png" alt=""><br><br>我这里为了方便把要用的android_server改了个名字<br><br>接着把IDA的androidserver push到模拟器上，并且用root身份进行。<br><img src="/img/android-native-so/5.png" alt=""><br><br>接下来是端口转发 adb forward tcp:23946 tcp:23946<br><br>然后以debug模式启动程序。这里同样有个坑，要重新开个cmd来执行端口转发和debug启动，否则会出错。<br><img src="/img/android-native-so/6.png" alt=""><br><br>然后看模拟器上程序会显示waiting for debugger的调试界面。<br><br><img src="/img/android-native-so/7.png" alt=""><br><br>然后IDA attach<br><br>注意:attach的时候要先设置下<br><img src="/img/android-native-so/8.png" alt=""><br><br>attach<br><br><img src="/img/android-native-so/9.png" alt=""><br><br>然后调试选项(注意:一定要打上这个勾)<br><br><img src="/img/android-native-so/10.png" alt=""><br><br>接下来一定要在IDA里面点击运行(这里我不知道所以重做了好多次- -!)<br><br>使用jdb恢复程序<br><br>jdb –connect com.sun.jdi.SocketAttach:hostname=127.0.0.1,port=8700<br><br>然后在JNI_Onload下断点<br><br><img src="/img/android-native-so/11.png" alt=""><br></p>
-<h2 id="0x03"><a href="#0x03" class="headerlink" title="0x03:"></a>0x03:</h2><p>IDA中按p键后会将代码块作为函数分析，再F5<br><br><img src="/img/android-native-so/12.png" alt=""><br><br>发现是个死循环调试，参考了下so调试遇到死循环如何调试的方法比较后，选择patch so的方式比较方便。<br><br>tips:这里选择patch so的原因是在之前的IDA中存在一个android_log_print()函数<br><br><img src="/img/android-native-so/13.png" alt=""><br><br>每次运行的时候固定输出了I/yaotong (XXX): SecurityCheck Started…所以通过patch so修改打印的内容，<br><br>可以直接利用这个android_log_print函数来比较输出正确的值。<br><br>当然也可以通过调试分析出上述的sub_130C()函数是用来反调试检测的(即IDA attach就退出程序)，nop掉这个函数就可以正常调试了。<br></p>
-<h2 id="0x04"><a href="#0x04" class="headerlink" title="0x04:"></a>0x04:</h2><p>因为arm架构没有单独的nop指令，所以采用蒸米所说的movs r0,r0的方法，<br><br>对应的机器码为00 00 A0 E1<br><br>来到sub_130C()的位置，将 13 FF FF EB 改为上述指令即可nop掉这个函数<br><br><img src="/img/android-native-so/14.png" alt=""><br><br><img src="/img/android-native-so/15.png" alt=""><br><br>再F5一看，发现已经成功nop掉<br><br><img src="/img/android-native-so/16.png" alt=""><br><br>然后保存so文件，再覆盖掉原来的so文件，再重新签名。<br><br>这次attach没有退出就表明patch so成功了，然后在验证函数<br><br>Java_com_yaotong_crackme_MainActivity_securityCheck下断点。<br><br>然后在app上输入密码，就会定位到这个点<br><br><img src="/img/android-native-so/17.png" alt=""><br><br>F5进去可以看到这里应该就是加密的字符串所在的地址<br><br><img src="/img/android-native-so/18.png" alt=""><br><br>点进去按D转为指针模式再看这个地址<br><br><img src="/img/android-native-so/19.png" alt=""><br><br>aiyou,bucuoo应该就是flag了<br></p>
-<h2 id="0x05"><a href="#0x05" class="headerlink" title="0x05:"></a>0x05:</h2><p>测试一下<br><br><img src="/img/android-native-so/20.png" alt=""><br><br>破解成功！<br></p>
-<h2 id="0x06"><a href="#0x06" class="headerlink" title="0x06:"></a>0x06:</h2><p>以前接触的都是java层的东西，一般都是找核心验证函数写个注册机就ok了。第一次调试native层让我学到了很多东西，同时领会到了IDA的强大。虽然过程中有很多坑，有时候都不知道怎么查，但是坚持下来还是完成了，为以后调试so文件打下了基础。<br></p>
-<h2 id="0x07"><a href="#0x07" class="headerlink" title="0x07:"></a>0x07:</h2><p>参考<br></p>
-<font color="#6495ED"><a href="http://www.droidsec.cn/%E5%AE%89%E5%8D%93%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95%E4%B8%83%E7%A7%8D%E6%AD%A6%E5%99%A8%E4%B9%8B%E5%AD%94%E9%9B%80%E7%BF%8E-ida-pro/" target="_blank" rel="external">Android动态调试Ida Pro</a></font>
+      		<p>对于Android架构层中的native层进行调试分析学习一波知识~<br><br><a id="more"></a></p>
+<h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00:前言"></a><b>0x00</b>:前言</h2><p>在做这道题之前发现有学长之前做过，所以理了下思路准备写写过程。毕竟我是新手，所以写得很啰嗦，其中遇到的很多细节问题困扰了我很久，也是希望通过这些让想入Android的朋友少跳点坑，还望不吝指正。<br><br>这道题是在阿里挑战赛上扒下来的，调试过程中遇到了不少的坑(毕竟第一次调)。本来打算用真机调试，但是后面的步骤中有因为手机ROM的问题必须得刷机，所以还是用的模拟器来调。</p>
+<h2 id="0x01"><a href="#0x01" class="headerlink" title="0x01:"></a><b>0x01</b>:</h2><p>这个CM主要是调试native层和patch so的使用。<br><br>安装apk进去是这样的:<br><br><img src="/img/android-native-so/1.png" alt=""><br><br>目标就是破解密码。<br><br>一般思路是先看看java层，然而反编译一看:<br><img src="/img/android-native-so/2.png" alt=""><br><br>丝毫没有破解的地方，所以只好考虑native层，调试so文件。<br><br>将反编译后的libcrackme.so丢进IDA里可以看到验证函数:<br><img src="/img/android-native-so/3.png" alt=""><br><br>接着尝试IDA attach这个so文件，但是attach上程序就退出了，所以就对下面的<b>JNI_Onload()</b>这个加载数据函数进行分析。</p>
+<h2 id="0x02"><a href="#0x02" class="headerlink" title="0x02:"></a><b>0x02</b>:</h2><p>首先打开ddms，不打开的话调试端口是关闭的，后面没法使用jdb。<br><br>!注意，这里有个坑是:最好先cmd 然后netstat –ano | find “8700”是否被占用，否则后续的调试时无法进行的。<br><br><b>只有占用端口8700的程序为javaw时候才正常。</b><br><br><b>小tips</b>:IDA中<b>android_server</b>一般有两个，一种是支持Android5.0以上的(字符短些)，还有一种是Android5.0以下的(字符长一点)。<br><br><img src="/img/android-native-so/4.png" alt=""><br><br>我这里为了方便把要用的android_server改了个名字<br><br>接着把IDA的androidserver push到模拟器上，并且用root身份进行。<br><img src="/img/android-native-so/5.png" alt=""><br><br>接下来是端口转发 <b>adb forward tcp:23946 tcp:23946</b><br><br>然后以debug模式启动程序。这里同样有个坑，要重新开个cmd来执行端口转发和debug启动，否则会出错。<br><img src="/img/android-native-so/6.png" alt=""><br><br>然后看模拟器上程序会显示waiting for debugger的调试界面。<br><br><img src="/img/android-native-so/7.png" alt=""><br><br>然后IDA attach<br><br>注意:attach的时候要先设置下<br><img src="/img/android-native-so/8.png" alt=""><br><br>attach<br><br><img src="/img/android-native-so/9.png" alt=""><br><br>然后调试选项(注意:一定要打上这个勾)<br><br><img src="/img/android-native-so/10.png" alt=""><br><br>接下来一定要在IDA里面点击运行(这里我不知道所以重做了好多次- -!)<br><br>使用jdb恢复程序<br><br><b>jdb –connect com.sun.jdi.SocketAttach:hostname=127.0.0.1,port=8700</b><br><br>然后在JNI_Onload下断点<br><br><img src="/img/android-native-so/11.png" alt=""><br></p>
+<h2 id="0x03"><a href="#0x03" class="headerlink" title="0x03:"></a><b>0x03</b>:</h2><p>IDA中按<b>p</b>键后会将代码块作为函数分析，再F5<br><br><img src="/img/android-native-so/12.png" alt=""><br><br>发现是个死循环调试，参考了下so调试遇到死循环如何调试的方法比较后，选择patch so的方式比较方便。<br><br>tips:这里选择patch so的原因是在之前的IDA中存在一个android_log_print()函数<br><br><img src="/img/android-native-so/13.png" alt=""><br><br>每次运行的时候固定输出了I/yaotong (XXX): SecurityCheck Started…所以通过patch so修改打印的内容，<br><br>可以直接利用这个android_log_print函数来比较输出正确的值。<br><br>当然也可以通过调试分析出上述的sub_130C()函数是用来反调试检测的(即IDA attach就退出程序)，nop掉这个函数就可以正常调试了。<br></p>
+<h2 id="0x04"><a href="#0x04" class="headerlink" title="0x04:"></a><b>0x04</b>:</h2><p>因为arm架构没有单独的nop指令，所以采用蒸米所说的<b>movs r0,r0</b>的方法，<br><br>对应的机器码为<b>00 00 A0 E1</b><br><br>来到<b>sub_130C()</b>的位置，将 13 FF FF EB 改为上述指令即可nop掉这个函数<br><br><img src="/img/android-native-so/14.png" alt=""><br><br><img src="/img/android-native-so/15.png" alt=""><br><br>再F5一看，发现已经成功nop掉<br><br><img src="/img/android-native-so/16.png" alt=""><br><br>然后保存so文件，再覆盖掉原来的so文件，再重新签名。<br><br>这次attach没有退出就表明patch so成功了，然后在验证函数<br><br><b>Java_com_yaotong_crackme_MainActivity_securityCheck</b>下断点。<br><br>然后在app上输入密码，就会定位到这个点<br><br><img src="/img/android-native-so/17.png" alt=""><br><br>F5进去可以看到这里应该就是加密的字符串所在的地址<br><br><img src="/img/android-native-so/18.png" alt=""><br><br>点进去按<b>D</b>转为指针模式再看这个地址<br><br><img src="/img/android-native-so/19.png" alt=""><br><br><b>aiyou,bucuoo</b>应该就是flag了<br></p>
+<h2 id="0x05"><a href="#0x05" class="headerlink" title="0x05:"></a><b>0x05</b>:</h2><p>测试一下<br><br><img src="/img/android-native-so/20.png" alt=""><br><br>破解成功！<br></p>
+<h2 id="0x06"><a href="#0x06" class="headerlink" title="0x06:"></a><b>0x06</b>:</h2><p>以前接触的都是java层的东西，一般都是找核心验证函数写个注册机就ok了。第一次调试native层让我学到了很多东西，同时领会到了IDA的强大。虽然过程中有很多坑，有时候都不知道怎么查，但是坚持下来还是完成了，为以后调试so文件打下了基础。<br></p>
+<h2 id="0x07"><a href="#0x07" class="headerlink" title="0x07:"></a><b>0x07</b>:</h2><p>参考<br><br><a href="http://www.droidsec.cn/%E5%AE%89%E5%8D%93%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95%E4%B8%83%E7%A7%8D%E6%AD%A6%E5%99%A8%E4%B9%8B%E5%AD%94%E9%9B%80%E7%BF%8E-ida-pro/" target="_blank" rel="external"><font color="#6495ED">Android动态调试Ida Pro</font></a></p>
 
             <div class="clearfix"></div>
             <hr class="nogutter">
         </div>
         <nav class="pagination" role="pagination">
     
+    <a class="pull-left" href="/2017/09/09/drozer/" style="float: left;">
+        ← Drozer
+    </a>
+    
     
     <a class="pull-right" href="/2017/09/09/hello-world/">
-        Hello World →
+        hello wolrd →
     </a>
     
 </nav>
@@ -219,7 +222,7 @@
     <div class="container">
             <div class="copy">
                 <p>
-                    &copy; 2014<script>new Date().getFullYear()>2010&&document.write("-"+new Date().getFullYear());</script>, Content By John Doe. All Rights Reserved.
+                    &copy; 2014<script>new Date().getFullYear()>2010&&document.write("-"+new Date().getFullYear());</script>, Content By Giv3more. All Rights Reserved.
                 </p>
                 <p>Theme By <a href="//go.kieran.top" style="color: #767D84">Kieran</a></p>
             </div>
