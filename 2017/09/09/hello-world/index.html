@@ -33,6 +33,8 @@
     <link rel="alternate" href="/atom.xml" title="Giv3more" type="application/atom+xml">
     <link rel="stylesheet" href="/css/all.css" media="screen" type="text/css">
     
+    <link rel="stylesheet" href="/highlightjs/vs.css" type="text/css">
+    
 
     <!--[if IE 8]>
     <link rel="stylesheet" type="text/css" href="/css/ie8.css" />
@@ -73,7 +75,31 @@
             <li><a href="/archives" class="animsition-link" title="archive">archives</a></li>
             <!-- Dropdown Menu -->
 			 
+            <li>
+                <a class="sb-toggle-submenu">Works<span class="sb-caret"></span></a>
+                <ul class="sb-submenu">
+                    
+                        <li><a href="/" target="_BLANK" class="animsition-link">AAA</a></li>
+                    
+                        <li><a href="/atom.xml" target="_BLANK" class="animsition-link">BBB</a></li>
+                    
+                </ul>
+            </li>
             
+            
+            
+            <li>
+                <a class="sb-toggle-submenu">Links<span class="sb-caret"></span></a>
+                <ul class="sb-submenu">
+                    
+                    <li><a href="https://summ3rf.github.io/" class="animsition-link">gay蜀黍</a></li>
+                    
+                    <li><a href="https://OnlyTO.github.io" class="animsition-link">嫖老湿</a></li>
+                    
+                    <li><a href="http://120.24.59.22" class="animsition-link">皮皮猪</a></li>
+                    
+                </ul>
+            </li>
             
         </ul>
         <!-- Lists in Slidebars -->
@@ -98,7 +124,7 @@
                     <!-- Nav logo -->
                     <div class="logo">
                         <a href="/" title="Logo" class="animsition-link">
-                        
+                         <img src="/img/logo.png" alt="Logo" width="35px;"/> 
                         </a>
                     </div>
                     <!-- // Nav logo -->
@@ -108,9 +134,19 @@
                             <li><a href="/" class="animsition-link">Giv3more</a></li>
                             <li class="nolink"><span>Always </span>Creative.</li>
                             
+                            <li><a href="https://github.com/" title="Github" target="_blank"><i class="icon-github"></i></a></li>
                             
                             
+                            <li><a href="https://twitter.com/" title="Twitter" target="_blank"><i class="icon-twitter"></i></a></li>
                             
+                            
+                            <li><a href="https://www.facebook.com/" title="Facebook" target="_blank"><i class="icon-facebook"></i></a></li>
+                            
+                            
+                            <li><a href="https://google.com/" title="Google-Plus" target="_blank"><i class="icon-google-plus"></i></a></li>
+                            
+                            
+                            <li><a href="http://weibo.com/" title="Sina-Weibo" target="_blank"><i class="icon-sina-weibo"></i></a></li>
                             
                             <li class="nolink"><span>Welcome!</span></li>
                         </ul>
@@ -182,9 +218,19 @@
             <div class="social">
                 <ul>
                     
+                    <li><a href="https://github.com/" title="Github" target="_blank"><i class="icon-github"></i></a>&nbsp;</li>
                     
                     
+                    <li><a href="https://twitter.com/" title="Twitter" target="_blank"><i class="icon-twitter"></i></a>&nbsp;</li>
                     
+                    
+                    <li><a href="https://www.facebook.com/" title="Facebook" target="_blank"><i class="icon-facebook"></i></a>&nbsp;</li>
+                    
+                    
+                    <li><a href="https://google.com/" title="Google-Plus" target="_blank"><i class="icon-google-plus"></i></a>&nbsp;</li>
+                    
+                    
+                    <li><a href="http://weibo.com/" title="Sina-Weibo" target="_blank"><i class="icon-sina-weibo"></i></a>&nbsp;</li>
                     
                 </ul>
             </div>
@@ -214,6 +260,23 @@
 <script src="/js/jquery.flexslider-min.js"></script><!-- Flexslider plugin -->
 <script src="/js/scripts.js"></script><!-- Theme scripts -->
 
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$('#intro').find('img').each(function(){
+  var alt = this.alt;
+
+  if (alt){
+    $(this).after('<span class="caption" style="display:none">' + alt + '</span>');
+  }
+
+  $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox" rel="gallery" />');
+});
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
 
 <!-- Initiate flexslider plugin -->
 <script type="text/javascript">
